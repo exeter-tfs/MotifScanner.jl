@@ -1,0 +1,13 @@
+name = "MotifScanner"
+uuid = "dba2f2e1-95c7-4c83-b437-9ac639531d3d"
+authors = ["owensnick <owensnick@gmail.com> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
