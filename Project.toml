@@ -3,6 +3,11 @@ uuid = "dba2f2e1-95c7-4c83-b437-9ac639531d3d"
 authors = ["owensnick <owensnick@gmail.com> and contributors"]
 version = "0.1.0"
 
+[deps]
+BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+
 [compat]
 julia = "1"
 

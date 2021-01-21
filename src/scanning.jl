@@ -59,3 +59,31 @@ function scanmotstats(mot, seq::T, thr=5) where{T}
     end
     res
 end
+
+function consensus(mot)
+    bases = (DNA_A, DNA_C, DNA_G, DNA_T)
+    LongDNASeq(mapreduce(c -> bases[argmax(c)], vcat, eachcol(mot.pwm)))
+end
+
+function motifind(motname, mots)
+    ms = findall(m -> occursin(motname, m.name), mots) 
+    if isempty(ms)
+       error("$motname not found") 
+    elseif length(ms) > 1
+        error("Multiple matches for $motname\n$([mots[m].name for m in ms])")
+    else
+       first(ms)
+    end 
+    
+end
+
+function consensus(motname, mots)
+    ms = filter(m -> occursin(motname, m.name), mots) 
+    if isempty(ms)
+       error("$motname not found") 
+    elseif length(ms) > 1
+        error("Multiple matches for $motname\n$([m.name for m in ms])")
+    else
+        consensus(first(ms))
+    end
+end
