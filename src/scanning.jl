@@ -34,4 +34,28 @@ function scanmotif(seq, mot)
     fscores, rscores
 end
 
-##
+### motif scann stats
+function scanmotstats(mot, seq::T, thr=5) where{T}
+        
+    fs, rs = scanmotif(seq, mot.pbg)
+    
+    ## neg ecdf
+    nec = ecdf([-fs ; -rs])
+    
+    fsi = findall(fs .> thr)
+    rsi = findall(rs .> thr)
+    
+    res = DataFrame(Motif=String[], start=Int[], stop=Int[], score=Float64[], strand=String[], emp_p=Float64[], prmax=Float64[], seq=Vector{T}())
+    
+    maxscore = sum(maximum(mot.pbg, dims=1))
+    
+    n = size(mot.pbg, 2)
+    for f in fsi
+       push!(res, (mot.name, f, f + n - 1, fs[f], "+", nec(-fs[f]), fs[f]/maxscore, seq[f:f+n-1]))
+    end
+    
+    for r in rsi
+       push!(res, (mot.name, r, r + n - 1, rs[r], "-", nec(-rs[r]), rs[r]/maxscore, reverse_complement(seq[r:r+n-1])))
+    end
+    res
+end
