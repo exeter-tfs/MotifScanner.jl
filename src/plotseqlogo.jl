@@ -66,7 +66,6 @@ function seqlogo!(mot, agct ; rc=false, xo=0.0, yo=0.0, label=:none, kwargs...)
         si = sortperm(c)
         yoff = yo
         for s in si
-#         for (v, b, cl) in zip(c, bases, cc)
             v = c[s]
             b = bases[s]
             cl = cc[s]
