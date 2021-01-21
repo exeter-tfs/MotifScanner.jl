@@ -1,5 +1,5 @@
 module MotifScanner
 
-# Write your package code here.
+using BioSequences
 
 end
