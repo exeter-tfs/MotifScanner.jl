@@ -36,7 +36,7 @@ function plotletter!(off, scale, letter; kwargs...)
     plotletter!(offsetletter(scaleletter(letter, scale[1], scale[2]), off[1], off[2]) ; kwargs...)
 end
 
-## plot the letters
+### plot the letters
 function plotletter!(letter ; bgc=:white, kwargs...)
     p = plot!(Shape(letter[1]), lab="", line=stroke(0); kwargs...)
     for l in letter[2:end]
@@ -83,6 +83,20 @@ function seqlogo!(mot, agct ; rc=false, xo=0.0, yo=0.0, label=:none, kwargs...)
         
     elseif label == :top
         annotate!(((off .+ xo)/2, yo + 2, text(mot.name, font(8, :top, :center))))
+    end
+    p
+end
+
+
+### for plotting sequences
+function plotseq(seq, agct; xo = 0.5, yo = 0, kwargs...)
+    p = plot(; kwargs...)
+    
+    offx = xo
+    offy = yo
+    for (i, s) in enumerate(seq)
+        plotletter!([offx, offy], [1.0, 0.25], agct[s], c=:black)
+        offx += 1
     end
     p
 end
