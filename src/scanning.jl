@@ -8,10 +8,10 @@ rcm(M) = reverse(reverse(M, dims=1), dims=2)
 function scanmotif(seq, mot)
     n = length(seq)
     m = size(mot, 2)
-    fscores = zeros(Float64, n)
-    rscores = zeros(Float64, n)
+    fscores = zeros(Float64, n - m + 1)
+    rscores = zeros(Float64, n - m + 1)
     rot = rcm(mot)
-    for i = 1:(n-m)
+    for i = 1:(n - m + 1)
         for j = 1:m
             if seq[i + j - 1] == DNA_A
                 fscores[i] += mot[1, j]
@@ -27,10 +27,7 @@ function scanmotif(seq, mot)
                 rscores[i] += rot[4, j]
             end
         end
-        
     end
-    
-    
     fscores, rscores
 end
 
