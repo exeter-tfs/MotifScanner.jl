@@ -53,8 +53,8 @@ end
 
 
 ### plot seq logo at specified offset
-function seqlogo!(mot, agct ; rc=false, xo=0.0, yo=0.0, label=:none, kwargs...)
-    pwm = ifelse(rc, rcm(mot.pwm), mot.pwm)
+function seqlogo!(mot, agct ; rc=false, xo=0.0, yo=0.0, label=:none, pseudo=1e-6, kwargs...)
+    pwm = ifelse(rc, rcm(mot.pwm), mot.pwm) .+ pseudo
     H = log2(4) .+ sum(pwm.*log2.(pwm), dims=1)
     bases = (DNA_A, DNA_C, DNA_G, DNA_T)
     S = pwm.*H
