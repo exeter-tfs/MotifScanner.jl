@@ -89,7 +89,7 @@ end
 
 
 ### for plotting sequences
-function plotseq(seq, agct; xo = 0.5, yo = 0, kwargs...)
+function plotseq(seq, agct=motif_letter_data(); xo = 0.5, yo = 0, kwargs...)
     p = plot(; kwargs...)
     
     offx = xo

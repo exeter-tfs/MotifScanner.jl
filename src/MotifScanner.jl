@@ -11,6 +11,6 @@ export loadmeme, scanmotif, scanmotstats, consensus, plotseq, plotletter!, seqlo
 
 include("loadmeme.jl")
 include("scanning.jl")
-include("seqlogodata.jl")
 include("plotseqlogo.jl")
+include("seqlogodata.jl")
 end
