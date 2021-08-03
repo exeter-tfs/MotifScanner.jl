@@ -46,14 +46,15 @@ function plotletter!(letter ; bgc=:white, kwargs...)
 end
 
 ### plot seq logo
-function seqlogo(mot, agct ; rc=false, xo=0.0, yo=0.0, kwargs...)
+function seqlogo(mot; rc=false, xo=0.0, yo=0.0, kwargs...)
     plot()
-    seqlogo!(mot, agct, rc=rc, xo=xo, yo=yo; kwargs...)
+    seqlogo!(mot, rc=rc, xo=xo, yo=yo; kwargs...)
 end
 
 
 ### plot seq logo at specified offset
-function seqlogo!(mot, agct ; rc=false, xo=0.0, yo=0.0, label=:none, pseudo=1e-6, kwargs...)
+function seqlogo!(mot; weight="normal", s=10 ; rc=false, xo=0.0, yo=0.0, label=:none, pseudo=1e-6, kwargs...)
+    acgt = motif_letter_data(weight=weight, s=s)
     pwm = ifelse(rc, rcm(mot.pwm), mot.pwm) .+ pseudo
     H = log2(4) .+ sum(pwm.*log2.(pwm), dims=1)
     bases = (DNA_A, DNA_C, DNA_G, DNA_T)
@@ -69,7 +70,7 @@ function seqlogo!(mot, agct ; rc=false, xo=0.0, yo=0.0, label=:none, pseudo=1e-6
             v = c[s]
             b = bases[s]
             cl = cc[s]
-           plotletter!([off, yoff], [1.0, v], agct[b], c=cl) 
+           plotletter!([off, yoff], [1.0, v], acgt[b], c=cl) 
            yoff += v
         end
         
@@ -89,13 +90,14 @@ end
 
 
 ### for plotting sequences
-function plotseq(seq, agct=motif_letter_data(); xo = 0.5, yo = 0, kwargs...)
+function plotseq(seq; weight="normal", s=10, xo = 0.5, yo = 0, kwargs...)
+    acgt=motif_letter_data(weight=weight, s=s)
     p = plot(; kwargs...)
     
     offx = xo
     offy = yo
     for (i, s) in enumerate(seq)
-        plotletter!([offx, offy], [1.0, 0.25], agct[s], c=:black)
+        plotletter!([offx, offy], [1.0, 0.25], acgt[s], c=:black)
         offx += 1
     end
     p
