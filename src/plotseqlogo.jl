@@ -53,7 +53,7 @@ end
 
 
 ### plot seq logo at specified offset
-function seqlogo!(mot; weight="normal", s=10 ; rc=false, xo=0.0, yo=0.0, label=:none, pseudo=1e-6, kwargs...)
+function seqlogo!(mot; weight="normal", s=10, rc=false, xo=0.0, yo=0.0, label=:none, pseudo=1e-6, kwargs...)
     acgt = motif_letter_data(weight=weight, s=s)
     pwm = ifelse(rc, rcm(mot.pwm), mot.pwm) .+ pseudo
     H = log2(4) .+ sum(pwm.*log2.(pwm), dims=1)
