@@ -8,7 +8,7 @@ import PyPlot
 
 ## This is a package for scanning motifs in DNA sequences and plotting sequence motifs.
 
-export loadmeme, loadhomer, scanmotif, scanmotstats, consensus, plotseq, plotletter!, seqlogo!, seqlogo
+export loadmeme, loadmemelibrary, loadhomer, scanmotif, scanmotstats, consensus, plotseq, plotletter!, seqlogo!, seqlogo
 
 include("loadmeme.jl")
 include("scanning.jl")
