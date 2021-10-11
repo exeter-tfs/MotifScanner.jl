@@ -8,8 +8,8 @@ function motif_letter_data(; s=10, weight="bold")
        c = PyPlot.matplotlib.textpath.TextPath((0, 0), "C", size=s, prop=fp) ## setting size as 400 gives > 100 interp points for bezier curve
        g = PyPlot.matplotlib.textpath.TextPath((0, 0), "G", size=s, prop=fp)
        t = PyPlot.matplotlib.textpath.TextPath((0, 0), "T", size=1, prop=fp)
-              
-       adata =  lettertuple(a.to_polygons())
+       ## A is vec of length 2, the longer element is the A the shorter is the whitespace, order of return appears to vary on different systems and different font properties
+       adata =  sort(lettertuple(a.to_polygons()), by = x -> length(x), rev=true) 
        cdata  = lettertuple([PyPlot.matplotlib.patches.PathPatch(c).get_verts()])
        gdata  = lettertuple([PyPlot.matplotlib.patches.PathPatch(g).get_verts()])
        tdata  = lettertuple(t.to_polygons())
