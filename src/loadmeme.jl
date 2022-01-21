@@ -120,3 +120,98 @@ function loadhomer(file, w = 1e-2, background=background_human_zero_markov())
     pbg = log2.(pwm) .- log2.(background)
     (name=name, id=longname, pwm=pwm, pbg=pbg, sct=sct, consensus=consensus)
 end
+
+
+
+### load motifs from JASPAR transfac file
+function loadtransfac(file, w = 1e-2, background=MotifScanner.background_human_zero_markov())
+
+    io = open(file) 
+    mode = 1
+    
+    motifname = ""
+    motifid = ""
+    currentmotif = Vector{Vector{Float64}}()
+    pwms = Vector{Matrix{Float64}}()
+    nsites = Float64[]
+    
+    motifdata = DataFrame(MotifName=String[], MotifID=String[], Property=String[], Value=String[])
+    
+    for line in eachline(io)
+        
+        fields = split(line)
+        
+        if mode == 1
+            if fields[1] == "AC"
+                mode = 2
+                currentmotif = Vector{Vector{Float64}}()
+            end
+        elseif mode == 2
+            if fields[1] == "DE"
+                motifid = fields[2]
+                motifname = fields[3]
+                if startswith(motifname, motifid) ## JASPAR 2022 release appears to have altered the format of JASPAR 2020, remove the leading motifid
+                    motifname = replace(motifname, string(motifid, ".") => "")
+                end
+            elseif fields[1] == "PO"
+                @assert fields[2] == "A"
+                @assert fields[3] == "C"
+                @assert fields[4] == "G"
+                @assert fields[5] == "T"
+                mode = 3
+            elseif fields[1] == "CC"
+                ind = findfirst(':', line)
+                
+                cfields = [line[4:(ind-1)], line[(ind+1):end]]
+                
+                if length(cfields) != 2
+                    @show line
+                    @show cfields
+                    error("")
+                end
+                push!(motifdata, (motifname, motifid, cfields...))
+            elseif fields[1] == "//"
+                mode = 1
+            end
+        elseif mode == 3
+            if fields[1] == "XX"
+                mode = 2
+                pwm = reduce(hcat, currentmotif)
+                v = sum(pwm, dims=1)
+                push!(nsites, mean(v))
+                pwm ./= sum(pwm, dims=1)
+                pwm .+= w
+                pwm ./= sum(pwm, dims=1)
+                push!(pwms, pwm)
+            else
+                v = parse.(Float64, fields[2:end])
+                push!(currentmotif, v)
+            end
+        end
+    end
+    close(io)
+    motifmeta = unstack(motifdata, :Property, :Value)
+
+    
+    motifmeta[!, :NumSites] = nsites
+    motifmeta[!, :Length] = size.(pwms, 2)
+
+    @assert iszero(mapreduce(c -> sum(ismissing, c), +, eachcol(motifmeta)))
+    dropmissing!(motifmeta)
+    
+    pbgs = [log2.(pwm) .- log2.(background) for pwm in pwms]
+
+    motifdata = [(name=motifname, id=id, pwm=pwm, pbg=pbg) for (motifname, id, pwm, pbg) in zip(motifmeta.MotifName, motifmeta.MotifID, pwms, pbgs)]
+    motifmeta.MotifFam = motiffamily.(motifmeta.MotifName);
+    motifmeta, motifdata
+
+end
+
+function motiffamily(motifname)
+    mf = uppercase.(motifname)
+    mf = replace(mf, r"\([A-Za-z0-9.]*\)$" => "")
+    
+    mf = replace(mf, r"[0-9]*$" => "")
+    mf = replace(mf, r"-$" => "")
+    mf = replace(mf, r"FOX[A-Z]" => "FOX")
+end
