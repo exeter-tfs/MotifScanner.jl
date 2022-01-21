@@ -31,6 +31,27 @@ function scanmotif(seq, mot)
     fscores, rscores
 end
 
+### scan max
+function scanmax(seq, motif)
+    fs, rs = scanmotif(seq, motif.pbg)
+    fm, fi = findmax(fs)
+    rm, ri = findmax(rs)
+    n = size(motif.pbg, 2)
+    if fm > rm
+        maxscore = fm
+        start = fi
+        stop = fi + n - 1
+        strand = "+"
+    
+    else
+        maxscore = rm
+        start = ri
+        stop  = ri + n - 1
+        strand = "-"
+    end
+    maxscore, start, stop, strand
+end
+
 ### motif scann stats
 function scanmotstats(mot, seq::T, thr=5) where{T}
         
