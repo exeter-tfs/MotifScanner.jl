@@ -39,8 +39,8 @@ end
 function motifscanall(seqtable, motifs)
     
     dfs = DataFrame[]
-    for row in zip(altseqs, eachrow(seqtable))
-        df = scanmots(row.refseq, row.altseq, row.ind, motifs)
+    for row in eachrow(seqtable)
+        df = scanmots(row.refseq, row.altseq, row.refind, motifs)
         df[!, :ID] .= row.ID
         push!(dfs, df)
     end
@@ -62,7 +62,7 @@ function scanmots(refseq, altseq, ind, motifs)
     df = DataFrame(MotifName=String[], MotifID=String[], MotSeqStart=Int[], RefMaxScore=Float64[], RefStart=Int[], RefStop=Int[], RefStrand=String[],
                                                                             AltMaxScore=Float64[], AltStart=Int[], AltStop=Int[], AltStrand=String[],
                                                                             RefPrMax=Float64[], AltPrMax=Float64[], LR_RefAlt=Float64[], PR_RefAlt=Float64[])
-    for m in motifs
+    @showprogress for m in motifs
         maxscore = sum(maximum(m.pbg, dims=1))
         refmseq, refstart = motifscanseq(refseq, ind, m)
         altmseq, altstart = motifscanseq(altseq, ind, m)
