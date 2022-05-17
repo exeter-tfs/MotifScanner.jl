@@ -5,7 +5,7 @@
 # chrom start stop id type = {var, ins, del} index refseq altseq
 
 loadrefseqs(vartable, fastafile, mml=40) = loadrefseqs(vartable.chrom, vartable.start, vartable.stop, vartable.ref, vartable.alt, fastafile, mml)
-#### currently only works for variants not indels
+#### currently only works for variants where Ref is single base
 function loadrefseqs(chroms, starts, stops, refs, alts, file, mml=40)
     reader = open(FASTA.Reader, file, index=string(file, ".fai"))
     
@@ -20,7 +20,7 @@ function loadrefseqs(chroms, starts, stops, refs, alts, file, mml=40)
         leftind = 1:(first(ind) - 1)
         rightind = (last(ind) + 1):length(refseq)
         altseq = refseq[leftind]*LongDNASeq(a)*refseq[rightind]
-        @assert length(refseq) == length(altseq)
+        #@assert length(refseq) == length(altseq)
         if string(refseq[ind]) == r
             cr += 1
         elseif string(refseq[ind]) == a
