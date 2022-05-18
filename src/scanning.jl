@@ -52,6 +52,37 @@ function scanmax(seq, motif)
     maxscore, start, stop, strand
 end
 
+### scan sum max
+function scansummax(seq, motif, thr=0)
+    fs, rs = scanmotif(seq, motif.pbg)
+    maxscore = sum(maximum(motif.pbg, dims=1))
+
+    fsi = findall(fs .> thr*maxscore)
+    rsi = findall(rs .> thr*maxscore)
+
+    sumscore    = (sum(fs[fsi]) + sum(rs[rsi]))/maxscore
+    totalmotifs = length(fsi) + length(rsi)
+    totalmax = sum(fs .== maxscore) .+ sum(rs .== maxscore)
+    
+    fm, fi = findmax(fs)
+    rm, ri = findmax(rs)
+    n = size(motif.pbg, 2)
+    if fm > rm
+        maxscore = fm
+        start = fi
+        stop = fi + n - 1
+        strand = "+"
+    else
+        maxscore = rm
+        start = ri
+        stop  = ri + n - 1
+        strand = "-"
+    end
+    maxscore, start, stop, strand, sumscore, totalmotifs, totalmax
+end
+
+
+
 ### motif scann stats
 function scanmotstats(mot, seq::T, thr=5) where{T}
         
