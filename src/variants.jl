@@ -56,7 +56,8 @@ function loadrefseqs(chroms, starts, stops, refs, alts, file, mml=40)
     for (c, s, e, r, a) in zip(chroms, starts, stops, refs, alts)
         start = s - mml
         stop  = e + mml
-        refseq = FASTA.extract(reader, DNAAlphabet{4}(), c, start:stop) 
+        # refseq = FASTA.extract(reader, DNAAlphabet{4}(), c, start:stop) 
+        refseq = FASTA.extract(reader, c, start:stop) |> LongDNA{4}
         refind = (s:e) .- start .+ 1
         altind = first(refind) .+ (1:length(a)) .- 1
         
